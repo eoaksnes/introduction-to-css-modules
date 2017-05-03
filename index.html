@@ -1,0 +1,621 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Introduction to CSS Modules</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section>
+            <img width="250px" style="background-color: white;" data-src="images/css-modules-logo.png" />
+            <h2 style="color: #FFF">An Introduction</h2>
+            <p style="color: #BBB">04.05.2017</p>
+            <p style="color: #BBB">Eirik Ola Aksnes</p>
+            <aside class="notes">
+                <ul>
+                    <li>Hvor mange har hørt om CSS modules før?</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <!--<h2>What happens with sloppy CSS</h2>-->
+            <img src="images/css-is-a-mess.gif"/>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        Regnet med at det er flere som har opplevd at CSS kan være "lite samarbeidsvillig"
+                    </li>
+                    <li>
+                        En av grunnene til dette er at CSS har globalt scope
+                    </li>
+                </ul>
+                <!--<h2>Do you recognize yourself?</h2>
+                <ul>
+                    <li>
+                        Have you ever slapped some random bits and junk at the bottom of a stylesheet,
+                        intending to get around to organizing it but never do?
+                    </li>
+                    <li>
+                        Have you ever run across styles that you weren't entirely sure what they did or if they were
+                        even being used?
+                    </li>
+                    <li>
+                        Have you ever wondered if you could get rid of some styles without breaking something? Wondered
+                        if the styles stood on their own or depended on other things? Or overwrote styles elsewhere?
+                    </li>
+                </ul>-->
+            </aside>
+        </section>
+
+        <section>
+            <h2>The global scope</h2>
+            <ul>
+                <li>
+                    Problems
+                    <ul>
+                        <li>Naming collisions</li>
+                        <li>Hard to maintain</li>
+                    </ul>
+                </li>
+                <li>How to deal with it?
+                    <ul>
+                        <li>Naming conventions like <a href="http://getbem.com/">BEM</a> or <a href="https://suitcss.github.io/">SUIT</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <aside class="notes">
+                Med globalt scope oppstår problemer som f.eks:
+                <ul>
+                    <li>Navne kollisjoner</li>
+                    <li>Det gjør at det blir vanskelig å vedlikeholde kode (gjør du en endring er det uvist om det vil ødelegge noe)</li>
+                </ul>
+                <ul>
+                    <li>I små enkle nettsider er global scope OK</li>
+                    <li>I store komplekse web-applikasjoner er global scope ett problem</li>
+                    <li>Det finnes allerede mange måter å håndtere dette på som f.eks BEM eller SUIT. Som fungerer forsåvidt bra!</li>
+                    <li>Regnet med at det er flere som fikk med seg presentasjonen tidligere i dag av XXX</li>
+                </ul>
+                <!--
+                CSS is great. It is a very powerful tool for styling web pages,
+                but it has some big issues, such as global scope.
+                This wasn't such a big deal when CSS was created and websites were much smaller and less complex,
+                but now that we have experienced the joy of maintaining large, complex web applications,
+                the trend is towards further separation of components and more modular building blocks.
+                -->
+            </aside>
+        </section>
+
+        <section>
+            <h2>The age of components</h2>
+            <img width="600px" src="images/divcomponents.png" />
+            <aside class="notes">
+                <ul>
+                    <li>Vi lever nå i skal vi si "en alder av komponenter"</li>
+                    <li>Altså vi deler opp web-applikasjonene våre i gjenbrukbare komponeneter (som gjerne er isolert ifra hverandre)</li>
+                    <li>Vi trenger verktøy som støtter det å lage slike gjenbrukbare komponenenter</li>
+                    <li>CSS Moduler er en metode for kunne håndtere CSS for slike gjenbrukbare komponenter</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>A component</h2>
+            <ul>
+                <li>
+                    JS + CSS together forms a component
+                </li>
+            </ul>
+            <pre><code>
+components/
+  SubmitButton/
+    SubmitButton.css
+    SubmitButton.js
+  NavBar/
+    NavBar.js
+    NavBar.css
+  ...
+            </code></pre>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        En JavaScript- og CSS- fil danner altså en komponent!
+                    </li>
+                    <li>
+                        Her har vi 2 komponenter kalt "SubmitButton" og "NavBar"
+                    </li>
+                    <li>
+                        Det man kan legge merke seg til her at vi ikke skriver vanlig HTML,
+                        men at vi må skrive alle våre komponenter i en JavaScript!
+                    </li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Web Page</h2>
+            <ul>
+                <li>A collection of components</li>
+            </ul>
+            <img width="600px" src="images/manycomponents.png" />
+            <aside class="notes">
+                <ul>
+                    <li>En nettside består av mange slike JS + CSS komponenter</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>
+                What is CSS Modules?
+            </h2>
+            <blockquote>
+                A CSS Module is a CSS file in which all class names and animation names are scoped locally by default
+            </blockquote>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        GÅ IGJENNOM DEFINISJON!
+                    </li>
+                    <li>
+                        Det første jeg kan si er at en 'CSS-module' er bare en vanlig .css-fil.
+                    </li>
+                    <li>
+                         Nøkkelordet her er scoped lokalt.
+                    </li>
+                    <li>
+                         Det vi skal se straks er at CSS klassene dine blir likt f.eks lokale variabler i JavaScript.
+                    </li>
+                    <li>
+                        Dette gjør at man kan bruke samme klassenavn i flere kompoenenter uten at det bli konflikter. Det er jo litt kult!
+                    </li>
+                    <!--<li>
+                    By the way, a 'CSS Module' is just a .css file. You call it a 'CSS Module' if you plan on using it with a CSS Modules compiler.
+                        Du kan bruke enkle klassenavn med generiske navn, siden du ikke trenger å bekymre deg for å forurense det globale scopet.
+                    </li>-->
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>The goal</h2>
+            <ul>
+                <li>
+                    We can write CSS for a component and be certain that the CSS won’t leak into other components
+                    <ul>
+                        <li>
+                            Make CSS private to a component
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <img width="600px" src="images/two.PNG" />
+        </section>
+
+        <section data-background="images/magic.gif">
+            <h2>It's Magic!</h2>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        Så her skjer det opplagt noe magi....neida....
+                    </li>
+                </ul>
+                CSS Modules krever bare at man bruker ett verktøy som laster og gjør dine CSS filer private for komponenter.
+                <ul>
+                    <li>Det finnes flere gode verktøy som har støtte for CSS modules, f.eks Webpack</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Tooling - Webpack</h2>
+            <img data-src="images/webpack2.png"/>
+            <aside class="notes">
+                <ul>
+                    <!--<li>I webpack er alle "assets" regnet som moduler, altså også CSS</li>-->
+                    <li>Webpack tar alt av kode:
+                        <ul>
+                            <li>
+                                JavaScript, CSS, Less, bilder og annet filer...
+                            </li>
+                            <li>
+                                og transformerer og pakker dem til noen få statiske filer som er praktisk å konsumere gjennom en nettleser
+                            </li>
+                            <li>
+                                Og ikke bare vil den pakke filene,
+                                den kan også gjøre noen transformasjon før den skaper de endelige filene,
+                                som i vårt tilfelle
+                                <ul>
+                                    <li>
+                                        Gjøre at våre CSS filer blir private for komponeneter...
+                                    </li>
+                                    <li>
+                                        ...Så hvordan fungere dette...
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                webpack kan også transpille kode fra ES2015 til ES5 ved hjelp av Babel,
+                                den kan også forvandle SASS / LESS-koden til Vanlig CSS, eller hvis du vil,
+                                kan det "minify" filene for å gjøre dem lettere...
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </aside>
+        </section>
+
+         <!--<section>
+            <h2>Write code</h2>
+            <img data-src="images/webpack3.png"/>
+        </section>-->
+
+        <!--<section>
+            <h2>Tooling #2</h2>
+            <img data-src="images/react.svg"/>
+            <aside class="notes">
+                Jeg vil demostrere med React i dag, siden jeg synes det fungerer bra for meg,
+                men man kan bruke hvilke helst frontend rammverk som f.eks angular eller ember.
+            </aside>
+        </section>-->
+
+
+        <section>
+            <h2>Simple Example</h2>
+            <img data-src="images/example1.svg"/>
+        </section>
+
+        <section>
+            <h2>The Code</h2>
+            <p>CSS</p>
+            <pre><code>
+.foo {
+  color: red;
+  border: 1px solid black;
+}
+</code></pre>
+            <p>JS</p>
+<pre><code>
+import styles from './MyComponent.css';
+const component = `<div class="${styles.foo}">
+    My Component
+</div>`;
+export default component;
+</code></pre>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        Vi skriver all vår CSS i en vanlig CSS fil.
+                    </li>
+                    <li>
+                        Vi skriver komponenten i en JS-fil (ES2015 i vårt tilfelle)
+                    </li>
+                    <li>
+                        JS-filen sier at den også trenger tilhørende CSS-filen
+                    </li>
+                    <li>
+                        I bygge-prosessen vil webpack henter CSS-filen og gjør den tilgjengelig for JS-filen
+                    </li>
+                    <li>
+                        Når du importerer CSS-filen blir det eksporterer et objekt med alle mappings fra lokale navn til globale navn.
+                    </li>
+                </ul>
+                <!--<ul>
+                    <li>Write all of our markup in a JavaScript file</li>
+                    <li>The JavaScript file says it also needs the css file</li>
+                    <li>Webpack will grab the css files and makes it available</li>
+                    <li>When importing the CSS Module from a JS Module,
+                        it exports an object with all mappings from local names to global names.</li>
+                    <li>By the way, a 'CSS Module' is just a .css file. You call it a 'CSS Module'
+                    if you plan on using it with a CSS Modules compiler.</li>
+                </ul>-->
+            </aside>
+        </section>
+
+        <section>
+            <h2>The Output</h2>
+            <ul>
+                <li>.foo is transformed into unique .s0m3_rnd-Ha5h</li>
+            </ul>
+            <p>Generated CSS</p>
+<pre><code>
+.s0m3_rnd-Ha5h {
+  color: red;
+  border: 1px solid black;
+}
+</code></pre>
+            <p>Generated HTML</p>
+<pre><code>
+<div class="s0m3_rnd-Ha5h">
+    My Component
+</div>
+</code></pre>
+            <aside class="notes">
+                <ul>
+                    <li>Under byggetrinnet blir .foo erstattet av denne helt nye unike .s0m3_rnd-Ha5h. Magi!</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>What magic is happening?</h2>
+            <img data-src="images/css-modules-compiler.svg" />
+            <aside class="notes">
+                <!--<ul>
+                    <li>During the build step the class attribute and selector .foo is entirely gone,
+                            replaced by this entirely new unique .s0m3_rnd-Ha5h. Magic!</li>
+                    <li>
+                        This is a way to automate the BEM notation by generating a unique className
+                that was sure it wouldn’t clash with other’s even if they used the same name
+                    </li>
+                </ul>
+                If you can see,
+                local modules became a way to automate the BEM notation by generating a unique className
+                that was sure it wouldn’t clash with other’s even if they used the same name.-->
+                <ul>
+                    <li>Skal i neste slide se næremere på hva en "CSS Modules Compiler" er for noe.</li>
+                    <li>Men det som skjer er at det blir generert en modifisert CSS versjon der .foo blir erstartet av ett unikt navn.</li>
+                    <li>Det blir samtidig generert ett JavaScript object som mapper lokale navn til de nye unike klassenavnene</li>
+                    <li>Det er dette objektet som blir importert i komponenten...</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>CSS Modules Compiler?</h2>
+            <p>Webpack has a built-in compiler!</p>
+            <p>In production</p>
+<pre><code>
+css-loader?modules&localIdentName=[hash:base64:8]
+</pre></code>
+            <p>In development</p>
+<pre><code>
+css-loader?modules&localIdentName=[name]__[local]___[hash:base64:5]
+</pre></code>
+            <aside class="notes">
+                <ul>
+                    <li>Webpack har en innebygd "CSS Modules Compiler"</li>
+                    <li>I webpack har man noe som heter "css-loader" som er ansvarlig for å hente/laste CSS-filene dine.</li>
+                    <li>Med å definere modules som vil man skru på støtte for "CSS modules".	Veldig enkelt!</li>
+                    <li>Du kan konfigurere generering av unike navn med "localIdentName".</li>
+                    <li>Har dessverre ikke tid til å gå innpå alle Webpack detaljer, men tenke å ta en kjapp demo av hvordan dette funker!</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h1>DEMO!</h1>
+            <aside class="notes">
+                <ul>
+                    <li>Husk å forandre på localIdentName under demo</li>
+                    <li>Forklar at "first" og "second" er isolert ifra hverandre</li>
+                    <li>show icons on inspect? https://glenmaddern.com/</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section data-background="images/thumbsup.gif">
+            <h2>Local by default</h2>
+            <ul>
+                <li>
+                    No more naming collisions
+                </li>
+                <li>
+                    Use simple class selectors with generic names
+                </li>
+            </ul>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        Er det noen som ser en likhet med BEM/SUIT alternativer til å håndtere globalt scope?
+                        <!--It automates the BEM notation by generating a unique className-->
+                    </li>
+                    <li>
+
+                        CSS Modules kan automatiserer BEM notasjon ved å generere en unik classname
+                    </li>
+                    <li>
+                        Du kan bruke enkle generiske navn - du trenger ikke bekymre deg for skal vi si forurense det globale scopet.
+                        <!--You can use simple class selectors with generic names — you don’t need to worry about polluting the
+                global scope.-->
+                    </li>
+                </ul>
+            </aside>
+        </section>
+
+
+
+        <section>
+            <h2>Composition example - Submit Button</h2>
+            <img width="800px" src="images/buttons.png" />
+            <aside class="notes">
+                <ul>
+                    <li>Tenkte skulle ta ett eksempel til, hvordan håndtere komposisjoner</li>
+                    <li>Vi har en knapp med forskjellige ønskede tilstander...</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>With SUIT/BEM style</h2>
+<pre><code>
+.Button { /* all styles for Normal */ }
+.Button--disabled { /* overrides for Disabled */ }
+.Button--error { /* overrides for Error */ }
+.Button--in-progress { /* overrides for In Progress */ }
+</pre></code>
+            PLAIN HTML
+<pre><code>
+&lt;button class="Button Button--in-progress"&gt;
+    Processing...
+&lt;/button&gt;
+</code></pre>
+    <p>+ explicit & maintainable code</p>
+    <p>- requires naming discipline</p>
+            <aside class="notes">
+                I BEM er man  avhengig av å "manuelt" velge unike klasse navn.
+                <!--Some of the problems that neither SASS or BEM fixed was that in the language logic there is no concept of true encapsulation, thus relying on the developer to choose unique class names.-->
+            </aside>
+        </section>
+
+        <section>
+            <h2>With CSS Modules</h2>
+            <!--<p>You never need to worry about your names being too generic, just use whatever makes the most sense</p>-->
+<pre><code>
+.normal { /* all styles for Normal */ }
+.disabled { /* all styles for Disabled */ }
+.error { /* all styles for Error */ }
+.inProgress { /* all styles for In Progress */ }
+</pre></code>
+            JS
+<pre><code>
+import styles from './SubmitButtonComponent.css';
+`&lt;button class="${styles.inProgress}"&gt;Processing...&lt;/button&gt;`
+</code></pre>
+            Generated HTML
+<pre><code>
+&lt;button class="SubmitButtonComponent__inProgress__abc5436"&gt;
+    Processing...
+&lt;/button&gt;
+</code></pre>
+            <aside class="notes">
+                <ul>
+                    <li>
+                        Legg merke til at alle klassene er frittstående, i stedet for at en er "basen" og resten blir "overrides"
+                    </li>
+                    <li>
+                        Vi bruker generiske navn (bare bruk det som gir mest mening)
+                    </li>
+                    <li>
+                        I CSS moduler skal hver klasse ha alle stilene som trengs for den varianten
+                    </li>
+                </ul>
+                <!--<ul>
+                    <li>Generic names (just use whatever makes the most sense)</li>
+                    <li>Notice that we don’t use the word “button” anywhere. Why would we?</li>
+                    <li>Notice that all the classes are stand-alone, rather than one being the “base” and the rest being “overrides”</li>
+                    <li>In CSS Modules each class should have all the styles needed for that variant</li>
+                    <li>It makes a big difference to how you use these styles in JavaScript.</li>
+                </ul>-->
+            </aside>
+        </section>
+
+        <section>
+            <h2>Composition is everything</h2>
+            <p>Represent shared styles between all the states</p>
+            <pre>
+                <code>
+.common {
+  /* all the common styles you want */
+}
+.normal {
+  composes: common;
+  /* anything that only applies to Normal */
+}
+.disabled {
+  composes: common;
+  /* anything that only applies to Disabled */
+}
+.error {
+  composes: common;
+  /* anything that only applies to Error */
+}
+.inProgress {
+  composes: common;
+  /* anything that only applies to In Progress */
+}
+                </code>
+            </pre>
+            <aside class="notes">
+                <p>Much like the @extends keyword in Sass</p>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Why should we use CSS Modules?</h2>
+            With CSS Modules, it’s a guarantee that all the styles for a single component:
+            <ul>
+                <li>Live in one place</li>
+                <li>Only apply to that component and nothing else</li>
+            </ul>
+            <p>=> Less fear of changing CSS !!!</p>
+            <aside class="notes">
+                <ul>
+                    <li>Less fear of changing CSS since no more global scope!</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Good fit</h2>
+            <ul>
+                <li>
+                    SPAs, with component based frameworks like React, Angular or something else...
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>References</h2>
+            <ul>
+                <li>
+                    https://www.kirupa.com/react/components.htm
+                </li>
+                <li>
+                    http://javascriptplayground.com/blog/2016/07/css-modules-webpack-react/
+                </li>
+                <li>
+                    https://glenmaddern.com/articles/css-modules
+                </li>
+                <li>
+                    https://speakerdeck.com/hugogiraudel/local-styling-with-css-modules
+                </li>
+                <li>
+                    http://andrewhfarmer.com/what-are-css-modules/
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+
+<script>
+    // More info https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        history: true,
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+            {src: 'plugin/markdown/marked.js'},
+            {src: 'plugin/markdown/markdown.js'},
+            {src: 'plugin/notes/notes.js', async: true},
+            {
+                src: 'plugin/highlight/highlight.js', async: true, callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+            }
+        ]
+    });
+</script>
+</body>
+</html>
