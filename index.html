@@ -470,7 +470,7 @@ css-loader?modules&localIdentName=[name]__[local]___[hash:base64:5]
 &lt;/button&gt;
 </code></pre>
     <p>+ explicit & maintainable code</p>
-    <p>- requires naming discipline</p>
+    <p>- requires naming discipline (is Button used before?)</p>
             <aside class="notes">
                 I BEM er man  avhengig av å "manuelt" velge unike klasse navn.
                 <!--Some of the problems that neither SASS or BEM fixed was that in the language logic there is no concept of true encapsulation, thus relying on the developer to choose unique class names.-->
@@ -479,6 +479,7 @@ css-loader?modules&localIdentName=[name]__[local]___[hash:base64:5]
 
         <section>
             <h2>With CSS Modules</h2>
+            <p>Notice that we don’t use the word “Button” anywhere.</p>
             <!--<p>You never need to worry about your names being too generic, just use whatever makes the most sense</p>-->
 <pre><code>
 .normal { /* all styles for Normal */ }
@@ -493,20 +494,25 @@ import styles from './SubmitButtonComponent.css';
 </code></pre>
             Generated HTML
 <pre><code>
-&lt;button class="SubmitButtonComponent__inProgress__abc5436"&gt;
+&lt;button class="SubmitButtonComponent__normal__abc5123
+               SubmitButtonComponent__inProgress__abc5436"&gt;
     Processing...
 &lt;/button&gt;
 </code></pre>
             <aside class="notes">
                 <ul>
                     <li>
-                        Legg merke til at alle klassene er frittstående, i stedet for at en er "basen" og resten blir "overrides"
-                    </li>
-                    <li>
                         Vi bruker generiske navn (bare bruk det som gir mest mening)
                     </li>
                     <li>
-                        I CSS moduler skal hver klasse ha alle stilene som trengs for den varianten
+
+                        De faktiske klassenavnene genereres automatisk og garanteres å være unike
+                    </li>
+                    <li>
+                        Legg merke til at alle klassene er frittstående,
+                        i stedet for at en er "basen" og resten blir "overrides".
+                        I CSS moduler skal hver klasse ha alle stilene som trengs for den varianten.
+                        Så hvordan fungerer det...
                     </li>
                 </ul>
                 <!--<ul>
@@ -521,7 +527,7 @@ import styles from './SubmitButtonComponent.css';
 
         <section>
             <h2>Composition is everything</h2>
-            <p>Represent shared styles between all the states</p>
+            <p>Share styles this way</p>
             <pre><code>
 .common {
   /* all the common styles you want */
@@ -544,18 +550,23 @@ import styles from './SubmitButtonComponent.css';
 }
             </code></pre>
             <aside class="notes">
-                <p>Much like the @extends keyword in Sass</p>
+                <ul>
+                    <li>
+                        "composes" sier at inProgress inneholder alle stilene fra .common,
+                        omtrent som @extends søkeordet i Sass.
+                        Det CSS-moduler gjør er at den endrer hvilke klasser som eksporteres til JavaScript.
+                    </li>
+                </ul>
             </aside>
         </section>
 
         <section>
-            <h2>Sharing CSS between files</h2>
+            <h2>Shareable styles</h2>
+            <p>Reuse style in a controlled manner</p>
             <pre><code>
 .element {
   composes: large from "./typography.css";
   composes: dark-text from "./colors.css";
-  composes: padding-all-medium from "./layout.css";
-  composes: subtle-shadow from "./effect.css";
 }
             </code></pre>
             <p>Typical hierarchy</p>
@@ -577,15 +588,13 @@ styles/
             <h2>Global scope</h2>
             <ul>
                 <li>Everything is local by default</li>
-                <li>You can specify :global when you need it</li>
+                <li>You can specify :global when you need to break out</li>
             </ul>
-            <pre>
-                <code>
+            <pre><code>
 :global .bar {
    ...global styles
 }
-                </code>
-            </pre>
+            </code></pre>
             <aside class="notes">
                 <ul>
                     <li>Maybe typography can be globaly scoped? No need to create a component for a h1 element?</li>
