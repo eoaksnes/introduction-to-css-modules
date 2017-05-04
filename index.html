@@ -79,6 +79,7 @@
                 <li>How to deal with it?
                     <ul>
                         <li>Naming conventions like <a href="http://getbem.com/">BEM</a> or <a href="https://suitcss.github.io/">SUIT</a></li>
+                        <li>...</li>
                     </ul>
                 </li>
             </ul>
@@ -521,8 +522,7 @@ import styles from './SubmitButtonComponent.css';
         <section>
             <h2>Composition is everything</h2>
             <p>Represent shared styles between all the states</p>
-            <pre>
-                <code>
+            <pre><code>
 .common {
   /* all the common styles you want */
 }
@@ -542,10 +542,54 @@ import styles from './SubmitButtonComponent.css';
   composes: common;
   /* anything that only applies to In Progress */
 }
+            </code></pre>
+            <aside class="notes">
+                <p>Much like the @extends keyword in Sass</p>
+            </aside>
+        </section>
+
+        <section>
+            <h2>Sharing CSS between files</h2>
+            <pre><code>
+.element {
+  composes: large from "./typography.css";
+  composes: dark-text from "./colors.css";
+  composes: padding-all-medium from "./layout.css";
+  composes: subtle-shadow from "./effect.css";
+}
+            </code></pre>
+            <p>Typical hierarchy</p>
+            <pre><code>
+styles/
+  shared/
+    colors.css
+    typography.css
+  components/
+    SubmitButton.css
+    NavBar.css
+                </code></pre>
+            <aside class="notes">
+                Working with Sass or LESS, each file that you @import gets processed in the same global workspace.
+            </aside>
+        </section>
+
+        <section>
+            <h2>Global scope</h2>
+            <ul>
+                <li>Everything is local by default</li>
+                <li>You can specify :global when you need it</li>
+            </ul>
+            <pre>
+                <code>
+:global .bar {
+   ...global styles
+}
                 </code>
             </pre>
             <aside class="notes">
-                <p>Much like the @extends keyword in Sass</p>
+                <ul>
+                    <li>Maybe typography can be globaly scoped? No need to create a component for a h1 element?</li>
+                </ul>
             </aside>
         </section>
 
